@@ -16,3 +16,7 @@ Word Finder is a scrabble type game that took inspiration from Scramble with Fri
 - List of high scores
 - Double letter, Triple letter
 - Items: freeze, inspiration, spin, vision
+
+## Wireframes
+
+![wireframes](./Word_Finder.png)
