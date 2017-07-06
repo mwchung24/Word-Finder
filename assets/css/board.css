@@ -3,11 +3,6 @@
   justify-content: center;
   width: 320px;
   height: 320px;
-
-
-  margin-top: 50px;
-  margin-left: 50px;
-  /*align-items: center;*/
 }
 
 #board ul {
@@ -26,6 +21,8 @@
   background: linear-gradient(135deg, white, silver);
   box-shadow: 0 0 .25em black;
   cursor: pointer;
+  /*z-index: 1;*/
+  position: relative;
 }
 
 #board ul li div:first-child {

@@ -69,7 +69,11 @@
 
 const Game = __webpack_require__(1);
 
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
+//   const game = new Game();
+// });
+
+$( () => {
   const game = new Game();
 });
 
@@ -79,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const Board = __webpack_require__(2);
+// const submitBar = require("./submit_bar.js");
 
 class Game {
   constructor() {
@@ -86,10 +91,18 @@ class Game {
     this.board = new Board (
       $("#board")
     );
+    // this.submitBar = new submitBar (
+    //   $("#submitBar")
+    // );
+
+
+    this.start();
   }
 
   start () {
     this.board.setupBoard();
+    this.board.clearWord();
+    // this.submitBar.submitBar();
   }
 
 }
@@ -102,6 +115,7 @@ module.exports = Game;
 /***/ (function(module, exports, __webpack_require__) {
 
 const GenerateLetter = __webpack_require__(3);
+const submitBar = __webpack_require__(6);
 
 class Board {
   constructor (
@@ -109,24 +123,67 @@ class Board {
   )
   {
 
+    this.submitBar = new submitBar (
+      $("#submitBar")
+    );
+
     this.GenerateLetter = new GenerateLetter();
     this.$el = $el;
+    this.selected = false;
+    this.MouseDown = this.MouseDown.bind(this);
+    this.MouseEnter = this.MouseEnter.bind(this);
+    this.MouseUp = this.MouseUp.bind(this);
+
     this.setup();
   }
 
   setupBoard() {
-    $("#board li");
+    $("#board ul li")
+      .on("mousedown", this.MouseDown)
+      .on("mouseenter", this.MouseEnter);
+      // .on("mouseup", this.MouseUp);
+  }
+
+  clearWord() {
+    $("body")
+    .on("mouseup", this.MouseUp);
+  }
+
+  MouseUp (e) {
+    e.preventDefault();
+    this.selected = false;
+    $("#submitBar input")
+      .val("");
+  }
+
+  MouseDown (e) {
+    e.preventDefault();
+    this.selected = true;
+    $("#submitBar input")
+      .val(e.currentTarget.children[1].innerHTML);
+  }
+
+  MouseEnter(e) {
+    e.preventDefault();
+    // this.selected = true;
+    if (this.selected === true) {
+      $("#submitBar input")
+      .val(function(index, val) {
+        return val + e.currentTarget.children[1].innerHTML;
+      });
+    }
+    // const $tile = $(e.currentTarget);
   }
 
   setup() {
     const $ul = $("<ul>");
-
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
-        let $li = $("<li>");
         let $div = $("<div>");
         let $div2 = $("<div>");
         let liLetter = this.GenerateLetter.randomLetter();
+        // let $li = $(`<li onmousedown="console.log('${liLetter}')">`);
+        let $li = $('<li>');
         $li.data("pos", [row, col]);
         $div.text(liLetter).appendTo($li);
         $div2.text(this.GenerateLetter.lettersValue(liLetter)).prependTo($li);
@@ -302,6 +359,37 @@ class GenerateLetter {
 }
 
 module.exports = GenerateLetter;
+
+
+/***/ }),
+/* 4 */,
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports) {
+
+
+class submitBar {
+  constructor(
+    $el
+  )
+  {
+
+    this.$el = $el;
+    this.setup();
+  }
+
+  submitBar() {
+    $("#submitBar input");
+  }
+
+  setup() {
+    const $input = $("<input disabled>");
+
+    this.$el.append($input);
+  }
+}
+
+module.exports = submitBar;
 
 
 /***/ })
