@@ -1,0 +1,9 @@
+html, body, footer, ul, li, h2, a, span {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: none;
+  cursor: default;
+}
