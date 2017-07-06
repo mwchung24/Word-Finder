@@ -11,7 +11,6 @@
 }
 
 #board ul li {
-  /*display: flex;*/
   height: 68px;
   width: 68px;
   margin: 5px;
@@ -21,7 +20,6 @@
   background: linear-gradient(135deg, white, silver);
   box-shadow: 0 0 .25em black;
   cursor: pointer;
-  /*z-index: 1;*/
   position: relative;
 }
 
@@ -34,7 +32,6 @@
 }
 
 #board ul li div:last-child {
-  /*height: 100%;*/
   font-size: 38px;
   font-weight: 700;
   display: flex;

@@ -4,4 +4,10 @@ body {
   justify-content: center;
   align-items: center;
   background-image: url("../images/background.jpg");
+  height: 500px;
+}
+
+.boardAndSubmitted {
+  display: flex;
+  align-items: center;
 }

@@ -83,7 +83,6 @@ $( () => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const Board = __webpack_require__(2);
-// const submitBar = require("./submit_bar.js");
 
 class Game {
   constructor() {
@@ -91,10 +90,6 @@ class Game {
     this.board = new Board (
       $("#board")
     );
-    // this.submitBar = new submitBar (
-    //   $("#submitBar")
-    // );
-
 
     this.start();
   }
@@ -102,7 +97,6 @@ class Game {
   start () {
     this.board.setupBoard();
     this.board.clearWord();
-    // this.submitBar.submitBar();
   }
 
 }
@@ -116,6 +110,7 @@ module.exports = Game;
 
 const GenerateLetter = __webpack_require__(3);
 const submitBar = __webpack_require__(6);
+const submittedWords = __webpack_require__(7);
 
 class Board {
   constructor (
@@ -126,6 +121,12 @@ class Board {
     this.submitBar = new submitBar (
       $("#submitBar")
     );
+
+    this.submittedWords = new submittedWords (
+      $("#submittedWords")
+    );
+
+    this.selectedTiles = [];
 
     this.GenerateLetter = new GenerateLetter();
     this.$el = $el;
@@ -141,7 +142,6 @@ class Board {
     $("#board ul li")
       .on("mousedown", this.MouseDown)
       .on("mouseenter", this.MouseEnter);
-      // .on("mouseup", this.MouseUp);
   }
 
   clearWord() {
@@ -152,12 +152,22 @@ class Board {
   MouseUp (e) {
     e.preventDefault();
     this.selected = false;
+    this.selectedTiles = [];
+    let $li = $('<li>');
+    $li.append($("#submitBar input").val());
+    $("#submittedWords ul")
+      .append($li);
+
     $("#submitBar input")
       .val("");
   }
 
   MouseDown (e) {
     e.preventDefault();
+    // debugger
+    let tile = $(e.currentTarget);
+    tile = tile.data().pos;
+    this.selectedTiles.push(tile);
     this.selected = true;
     $("#submitBar input")
       .val(e.currentTarget.children[1].innerHTML);
@@ -165,14 +175,18 @@ class Board {
 
   MouseEnter(e) {
     e.preventDefault();
-    // this.selected = true;
+    let tile = $(e.currentTarget);
+    tile = tile.data().pos;
     if (this.selected === true) {
-      $("#submitBar input")
-      .val(function(index, val) {
-        return val + e.currentTarget.children[1].innerHTML;
-      });
+      // debugger
+      if (!this.selectedTiles.includes(tile)) {
+        this.selectedTiles.push(tile);
+        $("#submitBar input")
+        .val(function(index, val) {
+          return val + e.currentTarget.children[1].innerHTML;
+        });
+      }
     }
-    // const $tile = $(e.currentTarget);
   }
 
   setup() {
@@ -367,7 +381,6 @@ module.exports = GenerateLetter;
 /* 6 */
 /***/ (function(module, exports) {
 
-
 class submitBar {
   constructor(
     $el
@@ -390,6 +403,34 @@ class submitBar {
 }
 
 module.exports = submitBar;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+class submittedWords {
+  constructor(
+    $el
+  )
+  {
+
+  this.$el = $el;
+  this.setup();
+  }
+
+  submittedWords() {
+    $("#submittedWords ul");
+  }
+
+  setup() {
+    const $ul = $("<ul>");
+
+    this.$el.append($ul);
+  }
+}
+
+module.exports = submittedWords;
 
 
 /***/ })
