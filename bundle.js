@@ -160,6 +160,8 @@ class Board {
 
     $("#submitBar input")
       .val("");
+
+    $("#board ul li").removeClass("active");
   }
 
   MouseDown (e) {
@@ -176,9 +178,12 @@ class Board {
   MouseEnter(e) {
     e.preventDefault();
     let tile = $(e.currentTarget);
+
     tile = tile.data().pos;
     if (this.selected === true) {
       // debugger
+      $("#board ul li")
+      .on("hover", $(e.currentTarget).addClass('active'));
       if (!this.selectedTiles.includes(tile)) {
         this.selectedTiles.push(tile);
         $("#submitBar input")

@@ -23,6 +23,14 @@
   position: relative;
 }
 
+#board ul li:active {
+  background: linear-gradient(135deg, white, gold);
+}
+
+#board ul li.active {
+  background: linear-gradient(135deg, white, gold);
+}
+
 #board ul li div:first-child {
   display: flex;
   justify-content: flex-end;
