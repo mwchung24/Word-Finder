@@ -188,12 +188,14 @@ const GenerateLetter = __webpack_require__(3);
 const submitBar = __webpack_require__(6);
 const submittedWords = __webpack_require__(7);
 const Score = __webpack_require__(8);
+const Trie = __webpack_require__(9);
 
 class Board {
   constructor (
     $el
   )
   {
+    jQuery.get('https://raw.githubusercontent.com/mwchung24/Word-Finder/master/assets/dictionary.txt', (text) => this.dictionary(text));
 
     this.submitBar = new submitBar (
       $("#submitBar")
@@ -217,6 +219,7 @@ class Board {
     this.MouseUp = this.MouseUp.bind(this);
     this.score = 0;
     this.setup = this.setup.bind(this);
+    this.dictionary = this.dictionary.bind(this);
 
     this.setup();
   }
@@ -254,11 +257,13 @@ class Board {
     this.selected = false;
     this.selectedTiles = [];
     let $li = $('<li>');
-    $li.append($("#submitBar input").val());
-    $("#submittedWords ul")
+    if(this.trie.validWord($("#submitBar input").val())) {
+      $li.append($("#submitBar input").val());
+      $("#submittedWords ul")
       .append($li);
 
-    this.keepScore($("#submitBar input").val());
+      this.keepScore($("#submitBar input").val());
+    }
 
     $("#submitBar input")
       .val("");
@@ -303,6 +308,14 @@ class Board {
 
     this.submittedWords.randomizeBoard();
     this.setup();
+  }
+
+  dictionary(text) {
+    const words = text.split("\n");
+    this.trie = new Trie();
+    words.forEach(word => {
+      this.trie.buildTrie(word);
+    });
   }
 
   setup() {
@@ -577,6 +590,58 @@ class Score {
 }
 
 module.exports = Score;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+class Trie {
+  constructor () {
+    this.root = new TrieNode("");
+  }
+
+  buildTrie (word) {
+    let currentNode = this.root;
+    for (let i = 0; i < word.length; i++) {
+      if (currentNode.children[word[i]]) {
+        currentNode = currentNode.children[word[i]];
+      } else {
+        let newNode = new TrieNode(word[i]);
+        currentNode.addChild(newNode);
+        currentNode = newNode;
+      }
+    }
+    currentNode.isWord = true;
+  }
+
+  validWord(word) {
+    let currentNode = this.root;
+    for (let i = 0; i < word.length; i++) {
+      if(currentNode.children[word[i]]) {
+        currentNode = currentNode.children[word[i]];
+      } else {
+        return false;
+      }
+    }
+
+    return currentNode.isWord;
+  }
+}
+
+class TrieNode {
+  constructor (letter) {
+    this.letter = letter;
+    this.children = {};
+    this.isWord = false;
+  }
+
+  addChild(newNode) {
+    this.children[newNode.letter] = newNode;
+  }
+}
+
+module.exports = Trie;
 
 
 /***/ })
