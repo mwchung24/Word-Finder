@@ -210,6 +210,7 @@ class Board {
     );
 
     this.selectedTiles = [];
+    this.submitted_words = [];
 
     this.GenerateLetter = new GenerateLetter();
     this.$el = $el;
@@ -220,6 +221,7 @@ class Board {
     this.score = 0;
     this.setup = this.setup.bind(this);
     this.dictionary = this.dictionary.bind(this);
+    this.adjacentTiles = this.adjacentTiles.bind(this);
 
     this.setup();
   }
@@ -252,17 +254,21 @@ class Board {
       .text(`Score: ${this.score}`);
   }
 
+
+
   MouseUp (e) {
     e.preventDefault();
     this.selected = false;
     this.selectedTiles = [];
     let $li = $('<li>');
     if(this.trie.validWord($("#submitBar input").val())) {
-      $li.append($("#submitBar input").val());
-      $("#submittedWords ul")
-      .append($li);
-
-      this.keepScore($("#submitBar input").val());
+      if(!this.submitted_words.includes($("#submitBar input").val())) {
+        $li.append($("#submitBar input").val());
+        $("#submittedWords ul")
+        .prepend($li);
+        this.submitted_words.push($("#submitBar input").val());
+        this.keepScore($("#submitBar input").val());
+      }
     }
 
     $("#submitBar input")
@@ -273,7 +279,6 @@ class Board {
 
   MouseDown (e) {
     e.preventDefault();
-    // debugger
     let tile = $(e.currentTarget);
     tile = tile.data().pos;
     this.selectedTiles.push(tile);
@@ -284,20 +289,51 @@ class Board {
 
   MouseEnter(e) {
     e.preventDefault();
+
     let tile = $(e.currentTarget);
 
     tile = tile.data().pos;
     if (this.selected === true) {
-      $("#board ul li")
-      .on("hover", $(e.currentTarget).addClass('active'));
-      if (!this.selectedTiles.includes(tile)) {
-        this.selectedTiles.push(tile);
-        $("#submitBar input")
-        .val(function(index, val) {
-          return val + e.currentTarget.children[1].innerHTML;
-        });
+      if (this.adjacentTiles(tile)) {
+        $("#board ul li")
+        .on("hover", $(e.currentTarget).addClass('active'));
+        if (!this.selectedTiles.includes(tile)) {
+          this.selectedTiles.push(tile);
+          $("#submitBar input")
+          .val(function(index, val) {
+            return val + e.currentTarget.children[1].innerHTML;
+          });
+        }
       }
     }
+  }
+
+  adjacentTiles (pos) {
+    const adjacent = [
+      [-1, -1],
+      [-1,  0],
+      [-1,  1],
+      [ 0,  1],
+      [ 0, -1],
+      [ 1, -1],
+      [ 1,  0],
+      [ 1,  1]
+    ];
+
+    // debugger
+
+    for (let i = 0; i < adjacent.length; i++) {
+      let lastTile = this.selectedTiles[this.selectedTiles.length - 1];
+      if (JSON.stringify([pos[0] - lastTile[0], pos[1] - lastTile[1]].sort()) === JSON.stringify(adjacent[i])) {
+        return true;
+      }
+
+    }
+    return false;
+
+    //  return adjacentDeltas.map(delta => {
+    //   return [pos[0] + delta[0], pos[1] + delta[1]];
+    // });
   }
 
   randomizeBoard() {
