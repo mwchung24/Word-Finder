@@ -111,6 +111,7 @@ module.exports = Game;
 const GenerateLetter = __webpack_require__(3);
 const submitBar = __webpack_require__(6);
 const submittedWords = __webpack_require__(7);
+const Score = __webpack_require__(8);
 
 class Board {
   constructor (
@@ -124,6 +125,10 @@ class Board {
 
     this.submittedWords = new submittedWords (
       $("#submittedWords")
+    );
+
+    this.Score = new Score (
+      $("#score")
     );
 
     this.selectedTiles = [];
@@ -149,6 +154,14 @@ class Board {
     .on("mouseup", this.MouseUp);
   }
 
+  score(word) {
+
+    
+
+    $("#score")
+      .text(`Score: ${word}`);
+  }
+
   MouseUp (e) {
     e.preventDefault();
     this.selected = false;
@@ -157,6 +170,8 @@ class Board {
     $li.append($("#submitBar input").val());
     $("#submittedWords ul")
       .append($li);
+
+    this.score($("#submitBar input").val());
 
     $("#submitBar input")
       .val("");
@@ -436,6 +451,32 @@ class submittedWords {
 }
 
 module.exports = submittedWords;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+class Score {
+  constructor(
+    $el
+  )
+  {
+
+  this.$el = $el;
+  this.setup();
+  }
+
+  score() {
+    $("#score");
+  }
+
+  setup() {
+
+  }
+}
+
+module.exports = Score;
 
 
 /***/ })
