@@ -96,6 +96,7 @@ class Game {
 
     this.playInterval = this.playInterval.bind(this);
     this.stopInterval = this.stopInterval.bind(this);
+    this.gameOver = this.gameOver.bind(this);
     this.start = this.start.bind(this);
     this.reset = this.reset.bind(this);
     this.timerfunc = this.timerfunc.bind(this);
@@ -135,6 +136,11 @@ class Game {
     this.resetButton();
   }
 
+  gameOver () {
+    this.board.deactivateBoard();
+    console.log("game");
+  }
+
   playInterval() {
     clearInterval(this.interval);
     this.interval = null;
@@ -151,8 +157,15 @@ class Game {
 
   timerfunc () {
     this.timer -= 1;
-    $("#timer")
-    .text(`Timer: ${this.timer}`);
+    if (this.timer <= 0) {
+      $("#timer")
+      .text(`Timer: 0`);
+      this.stopInterval();
+      this.gameOver();
+    } else {
+      $("#timer")
+      .text(`Timer: ${this.timer}`);
+    }
   }
 
   reset() {
@@ -212,6 +225,14 @@ class Board {
     $("#board ul li")
       .on("mousedown", this.MouseDown)
       .on("mouseenter", this.MouseEnter);
+  }
+
+  deactivateBoard() {
+    $("#board ul li")
+      .off();
+
+    $("body")
+      .off();
   }
 
   clearWord() {
