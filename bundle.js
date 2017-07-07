@@ -91,14 +91,77 @@ class Game {
       $("#board")
     );
 
-    this.start();
+    this.timer = 60;
+    this.interval = null;
+
+    this.playInterval = this.playInterval.bind(this);
+    this.stopInterval = this.stopInterval.bind(this);
+    this.start = this.start.bind(this);
+    this.reset = this.reset.bind(this);
+    this.timerfunc = this.timerfunc.bind(this);
+    this.startButton();
+  }
+
+  startButton() {
+    const $button = $("<button>");
+
+    $button.text("Start");
+
+    $("#startButton")
+    .on("click", this.start);
+
+    $("#startButton")
+    .append($button);
+  }
+
+  resetButton() {
+    const $resetButton = $("<button>");
+
+    $resetButton.text("Restart");
+
+    $("#startButton")
+    .on("click", this.reset);
+
+    $("#startButton")
+    .append($resetButton);
   }
 
   start () {
     this.board.setupBoard();
     this.board.clearWord();
+    $("#startButton button").remove();
+
+    this.playInterval();
+    this.resetButton();
   }
 
+  playInterval() {
+    clearInterval(this.interval);
+    this.interval = null;
+    this.interval = setInterval(
+      this.timerfunc,
+      1000
+    );
+  }
+
+  stopInterval() {
+    clearInterval(this.interval);
+    this.interval = null;
+  }
+
+  timerfunc () {
+    this.timer -= 1;
+    $("#timer")
+    .text(`Timer: ${this.timer}`);
+  }
+
+  reset() {
+    this.board.randomizeBoard();
+    this.timer = 60;
+    $("#timer")
+    .text(`Timer: ${this.timer}`);
+    this.start();
+  }
 }
 
 module.exports = Game;
@@ -139,6 +202,8 @@ class Board {
     this.MouseDown = this.MouseDown.bind(this);
     this.MouseEnter = this.MouseEnter.bind(this);
     this.MouseUp = this.MouseUp.bind(this);
+    this.score = 0;
+    this.setup = this.setup.bind(this);
 
     this.setup();
   }
@@ -154,12 +219,13 @@ class Board {
     .on("mouseup", this.MouseUp);
   }
 
-  score(word) {
-
-    
-
+  keepScore(word) {
+    let wordArray = word.split("");
+    for (let i = 0; i < wordArray.length; i++) {
+      this.score += this.GenerateLetter.lettersValue(wordArray[i]);
+    }
     $("#score")
-      .text(`Score: ${word}`);
+      .text(`Score: ${this.score}`);
   }
 
   MouseUp (e) {
@@ -171,7 +237,7 @@ class Board {
     $("#submittedWords ul")
       .append($li);
 
-    this.score($("#submitBar input").val());
+    this.keepScore($("#submitBar input").val());
 
     $("#submitBar input")
       .val("");
@@ -196,7 +262,6 @@ class Board {
 
     tile = tile.data().pos;
     if (this.selected === true) {
-      // debugger
       $("#board ul li")
       .on("hover", $(e.currentTarget).addClass('active'));
       if (!this.selectedTiles.includes(tile)) {
@@ -207,6 +272,16 @@ class Board {
         });
       }
     }
+  }
+
+  randomizeBoard() {
+    $("#board ul li").remove();
+    this.score = 0;
+    $("#score")
+      .text(`Score: ${this.score}`);
+
+    this.submittedWords.randomizeBoard();
+    this.setup();
   }
 
   setup() {
@@ -447,6 +522,10 @@ class submittedWords {
     const $ul = $("<ul>");
 
     this.$el.append($ul);
+  }
+
+  randomizeBoard() {
+    $("#submittedWords ul li").remove();
   }
 }
 
