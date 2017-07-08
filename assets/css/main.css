@@ -4,7 +4,7 @@ body {
   justify-content: center;
   align-items: center;
   background-image: url("../images/background.jpg");
-  height: 500px;
+  height: 700px;
 }
 
 .boardAndSubmitted {
@@ -15,6 +15,7 @@ body {
 .barAndStart {
   display: flex;
   align-items: center;
+  padding-left: 70px;
 }
 
 #startButton {

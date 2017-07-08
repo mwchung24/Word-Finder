@@ -1,0 +1,57 @@
+.Logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.Logo ul {
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+}
+
+.Logo ul li {
+  height: 68px;
+  width: 68px;
+  margin: 5px;
+  border: .5px solid black;
+  border-radius: 15px;
+  list-style: none;
+  background: linear-gradient(135deg, white, silver);
+  box-shadow: 0 0 .25em black;
+  cursor: pointer;
+  position: relative;
+}
+
+.Logo ul li div:first-child {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.Logo ul li div:last-child {
+  font-size: 38px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+}
+
+.Logo ul li div {
+  font-family: sans-serif;
+}
+
+.Word {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.Logo ul div.Word li {
+  background: linear-gradient(135deg, white, gold);
+}
+
+.Finder {
+  display: flex;
+  justify-content: flex-end;
+}

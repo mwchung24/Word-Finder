@@ -138,7 +138,6 @@ class Game {
 
   gameOver () {
     this.board.deactivateBoard();
-    console.log("game");
   }
 
   playInterval() {
