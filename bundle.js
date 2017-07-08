@@ -109,7 +109,7 @@ class Game {
     $button.text("Start");
 
     $("#startButton")
-    .on("click", this.start);
+    .on("click", this.reset);
 
     $("#startButton")
     .append($button);
@@ -184,10 +184,10 @@ module.exports = Game;
 /***/ (function(module, exports, __webpack_require__) {
 
 const GenerateLetter = __webpack_require__(3);
-const submitBar = __webpack_require__(6);
-const submittedWords = __webpack_require__(7);
-const Score = __webpack_require__(8);
-const Trie = __webpack_require__(9);
+const submitBar = __webpack_require__(4);
+const submittedWords = __webpack_require__(5);
+const Score = __webpack_require__(6);
+const Trie = __webpack_require__(7);
 
 class Board {
   constructor (
@@ -221,11 +221,13 @@ class Board {
     this.setup = this.setup.bind(this);
     this.dictionary = this.dictionary.bind(this);
     this.adjacentTiles = this.adjacentTiles.bind(this);
+    this.wordCount = this.wordCount.bind(this);
 
     this.setup();
   }
 
   setupBoard() {
+    this.submitted_words = [];
     $("#board ul li")
       .on("mousedown", this.MouseDown)
       .on("mouseenter", this.MouseEnter);
@@ -237,6 +239,19 @@ class Board {
 
     $("body")
       .off();
+
+    $("#board ul").remove();
+
+    let $div = $('<div class="gameOverText">');
+    $div.text(`You're a super star! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
+  }
+
+  wordCount () {
+    if (this.submitted_words.length <= 0) {
+      return 0;
+    } else {
+      return this.submitted_words.length;
+    }
   }
 
   clearWord() {
@@ -319,8 +334,6 @@ class Board {
       [ 1,  1]
     ];
 
-    // debugger
-
     for (let i = 0; i < adjacent.length; i++) {
       let lastTile = this.selectedTiles[this.selectedTiles.length - 1];
       if (JSON.stringify([pos[0] - lastTile[0], pos[1] - lastTile[1]].sort()) === JSON.stringify(adjacent[i])) {
@@ -329,10 +342,6 @@ class Board {
 
     }
     return false;
-
-    //  return adjacentDeltas.map(delta => {
-    //   return [pos[0] + delta[0], pos[1] + delta[1]];
-    // });
   }
 
   randomizeBoard() {
@@ -347,6 +356,7 @@ class Board {
 
   dictionary(text) {
     const words = text.split("\n");
+    words.pop();
     this.trie = new Trie();
     words.forEach(word => {
       this.trie.buildTrie(word);
@@ -354,13 +364,15 @@ class Board {
   }
 
   setup() {
+    $("#board ul").remove();
+    $("#submittedWords ul li").remove();
+    $("#board div").remove();
     const $ul = $("<ul>");
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
         let $div = $("<div>");
         let $div2 = $("<div>");
         let liLetter = this.GenerateLetter.randomLetter();
-        // let $li = $(`<li onmousedown="console.log('${liLetter}')">`);
         let $li = $('<li>');
         $li.data("pos", [row, col]);
         $div.text(liLetter).appendTo($li);
@@ -540,9 +552,7 @@ module.exports = GenerateLetter;
 
 
 /***/ }),
-/* 4 */,
-/* 5 */,
-/* 6 */
+/* 4 */
 /***/ (function(module, exports) {
 
 class submitBar {
@@ -570,7 +580,7 @@ module.exports = submitBar;
 
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports) {
 
 class submittedWords {
@@ -602,7 +612,7 @@ module.exports = submittedWords;
 
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports) {
 
 class Score {
@@ -628,7 +638,7 @@ module.exports = Score;
 
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports) {
 
 class Trie {

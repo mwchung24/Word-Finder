@@ -49,3 +49,12 @@
 #board ul li div {
   font-family: sans-serif;
 }
+
+.gameOverText {
+  color: white;
+  font-family: sans-serif;
+  margin-top: 50px;
+  width: 75%;
+  font-weight: 700;
+  font-size: 24px;
+}
