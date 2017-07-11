@@ -50,3 +50,33 @@ body {
   font-size: 24px;
   margin-bottom: 15px;
 }
+
+.iconList {
+  width: 1000px;
+  margin-top: 30px;
+}
+
+.icons {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+
+}
+
+.icons li {
+  margin: 20px;
+}
+
+.icons i {
+  font-size: 50px;
+  cursor: pointer;
+  color: white;
+}
+
+.wordsPoints {
+  padding-bottom: 10px;
+}
+
+.Instruct ul {
+  list-style: none;
+}

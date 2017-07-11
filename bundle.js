@@ -101,6 +101,21 @@ class Game {
     this.reset = this.reset.bind(this);
     this.timerfunc = this.timerfunc.bind(this);
     this.startButton();
+    this.splash();
+  }
+
+  splash() {
+    $("#board ul").remove();
+    let $div = $('<div class="Instructions">');
+    $("#board").append($div);
+    let $div2 = $('<div class="InstructionsHeader">');
+    $("#board div").append($div2.text("Instructions"));
+    let $div3 = $('<div class="Instruct">');
+    $div.append($div3.text("Use mouse to click and drag across adjacent letters to create words!  You can also drag diagonally."));
+    let $div4 = $('<div class="Instruct">');
+    $div.append($div4.text("You have 60 seconds to submit as many words as you can!"));
+    let $div5 = $('<div class="Instruct">');
+    $div.append($div5.text("Good Luck!"));
   }
 
   startButton() {
@@ -145,7 +160,7 @@ class Game {
     this.interval = null;
     this.interval = setInterval(
       this.timerfunc,
-      1000
+      10
     );
   }
 
@@ -210,6 +225,7 @@ class Board {
 
     this.selectedTiles = [];
     this.submitted_words = [];
+    this.highScore = [];
 
     this.GenerateLetter = new GenerateLetter();
     this.$el = $el;
@@ -222,6 +238,7 @@ class Board {
     this.dictionary = this.dictionary.bind(this);
     this.adjacentTiles = this.adjacentTiles.bind(this);
     this.wordCount = this.wordCount.bind(this);
+    this.sortNum = this.sortNum.bind(this);
 
     this.setup();
   }
@@ -244,6 +261,20 @@ class Board {
 
     let $div = $('<div class="gameOverText">');
     $div.text(`You're a super star! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
+
+    this.highScore.push(`${this.score}`);
+    this.highScore.sort(this.sortNum).reverse();
+
+    $(".Instruct ul li").remove();
+
+    this.highScore.forEach((score) => {
+      let $li = $('<li>');
+      $(".Instruct ul").append($li.text(`Player: ${score} points`));
+    });
+  }
+
+  sortNum (a, b) {
+    return a - b;
   }
 
   wordCount () {
