@@ -2,4 +2,4 @@
 
 Demo the game [here][word-finder]!
 
-[word-finder]: https://help.github.com/articles/ignoring-files
+[word-finder]: https://mwchung24.github.io/Word-Finder/
