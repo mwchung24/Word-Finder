@@ -22,13 +22,19 @@ The ability for the user to be able to click and drag to create words was implem
 ![mouseUp](./assets/images/mouseUp.png)
 ![mouseDown](./assets/images/mouseDown.png)
 ![mouseEnter](./assets/images/mouseEnter.png)
+
+Users can only select tiles that are adjacent to the current tile and cannot select tiles that have already been selected.  This was solved by storing all of the visited tile's positions in an array.
 ![adjacentTiles](./assets/images/adjacentTiles.png)
 
 ### Dictionary Lookup
 
+A trie was built for quick look up of the dictionary.  The dictionary has around 178k words and having an efficient way to check against the dictionary was important.
+
 ![trie](./assets/images/trie.png)
 
 ### High scores
+
+The username and scores are stored on a FireBase database and can persist between page refreshes and even on different computers.
 
 ![fireBase](./assets/images/fireBase.png)
 
