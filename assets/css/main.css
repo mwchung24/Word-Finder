@@ -76,6 +76,34 @@ body {
   padding-bottom: 10px;
 }
 
-.Instruct ul {
-  list-style: none;
+.highscores {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
+.highscores input {
+  margin-top: 10px;
+  width: 150px;
+  height: 20px;
+  background-color: transparent;
+  border: 1px solid silver;
+  border-radius: 10px;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+}
+
+.highscores input::placeholder {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+
+/*.Instruct ul {
+  list-style: none;
+}*/

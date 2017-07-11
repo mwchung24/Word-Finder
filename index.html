@@ -68,17 +68,16 @@
     </div>
     <div class="boardAndSubmitted">
       <div class="Instructions">
-        <div class="InstructionsHeader">
-          High Scores
+        <div class="InstructionsHeader highscores">
+          <div class="">High Scores</div>
         </div>
         <div class="Instruct">
-          <div class="wordsPoints">Words/Points</div>
-          <ul>
-          </ul>
+          <ol>
+          </ol>
         </div>
       </div>
       <div id="board"></div>
-      <div id="submittedWords">Submitted Words</div>
+      <div id="submittedWords">Words Found</div>
     </div>
     <div class="iconList">
       <ul class="icons">
@@ -88,5 +87,18 @@
         <li><a href="http://www.martinwchung.com"><i class="fa fa-user" aria-hidden="true"></i></a></li>
       </ul>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyAfLVjAKfEmgQ3GR8XzERhQHHZIINmMJSg",
+        authDomain: "word-finder-82dc6.firebaseapp.com",
+        databaseURL: "https://word-finder-82dc6.firebaseio.com",
+        projectId: "word-finder-82dc6",
+        storageBucket: "word-finder-82dc6.appspot.com",
+        messagingSenderId: "841271952536"
+      };
+      firebase.initializeApp(config);
+    </script>
   </body>
 </html>

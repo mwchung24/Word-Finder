@@ -116,6 +116,8 @@ class Game {
     $div.append($div4.text("You have 60 seconds to submit as many words as you can!"));
     let $div5 = $('<div class="Instruct">');
     $div.append($div5.text("Good Luck!"));
+
+    this.board.username($div5);
   }
 
   startButton() {
@@ -240,7 +242,9 @@ class Board {
     this.wordCount = this.wordCount.bind(this);
     this.sortNum = this.sortNum.bind(this);
 
+
     this.setup();
+    // this.username = prompt("Please enter username");
   }
 
   setupBoard() {
@@ -262,19 +266,41 @@ class Board {
     let $div = $('<div class="gameOverText">');
     $div.text(`You're a super star! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
 
-    this.highScore.push(`${this.score}`);
-    this.highScore.sort(this.sortNum).reverse();
+    let newScore = firebase.database().ref("scores").push();
+    window.newScore = newScore;
+    let username = $(".highscores input").val();
+    newScore.set({username: `${username}`, score: parseInt(this.score)});
 
-    $(".Instruct ul li").remove();
-
-    this.highScore.forEach((score) => {
-      let $li = $('<li>');
-      $(".Instruct ul").append($li.text(`Player: ${score} points`));
+    var scoresTable = firebase.database().ref("scores");
+    scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
+      $(".Instruct ol li").remove();
+      highscores = [];
+      snapshot.forEach(childSnapshot => {
+        highscores.push((childSnapshot.val()));
+      });
+        highscores.reverse();
+      for (let i = 0; i < highscores.length; i++) {
+        let $li = $('<li>');
+        $(".Instruct ol").append($li.text(`${highscores[i].username}: ${highscores[i].score} points`));
+      }
     });
+
+
+    // $(".Instruct ol li").remove();
+    //
+    // this.highScore.forEach((score) => {
+    //   let $li = $('<li>');
+    //   $(".Instruct ol").append($li.text(`Player: ${score} points`));
+    // });
   }
 
   sortNum (a, b) {
     return a - b;
+  }
+
+  username($div5) {
+    let $input = $('<input placeholder="Enter Username">');
+    $(".highscores").append($input);
   }
 
   wordCount () {
@@ -298,8 +324,6 @@ class Board {
     $("#score")
       .text(`Score: ${this.score}`);
   }
-
-
 
   MouseUp (e) {
     e.preventDefault();
@@ -413,6 +437,20 @@ class Board {
     }
 
     this.$el.append($ul);
+
+    var scoresTable = firebase.database().ref("scores");
+    scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
+      $(".Instruct ol li").remove();
+      highscores = [];
+      snapshot.forEach(childSnapshot => {
+        highscores.push((childSnapshot.val()));
+      });
+        highscores.reverse();
+      for (let i = 0; i < highscores.length; i++) {
+        let $li = $('<li>');
+        $(".Instruct ol").append($li.text(`${highscores[i].username}: ${highscores[i].score} points`));
+      }
+    });
   }
 }
 
