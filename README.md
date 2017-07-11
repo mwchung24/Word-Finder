@@ -24,7 +24,31 @@ The ability for the user to be able to click and drag to create words was implem
 ![mouseEnter](./assets/images/mouseEnter.png)
 
 Users can only select tiles that are adjacent to the current tile and cannot select tiles that have already been selected.  This was solved by storing all of the visited tile's positions in an array.
-![adjacentTiles](./assets/images/adjacentTiles.png)
+```javascript
+adjacentTiles (pos) {
+  const adjacent = [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0,  1],
+    [ 0, -1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+  ];
+
+  for (let i = 0; i < adjacent.length; i++) {
+    let lastTile = this.selectedTiles[this.selectedTiles.length - 1];
+    if (JSON.stringify([pos[0] - lastTile[0], pos[1] - lastTile[1]]
+      .sort()) === JSON.stringify(adjacent[i])) {
+      return true;
+    }
+
+  }
+  return false;
+}
+```
+<!-- ![adjacentTiles](./assets/images/adjacentTiles.png) -->
 
 ### Dictionary Lookup
 
