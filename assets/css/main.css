@@ -5,6 +5,7 @@ body {
   align-items: center;
   background-image: url("../images/background.jpg");
   height: 700px;
+  margin-top: 30px;
 }
 
 .boardAndSubmitted {
@@ -88,16 +89,20 @@ body {
   width: 150px;
   height: 20px;
   background-color: transparent;
-  border: 1px solid silver;
+  border: 1px solid gold;
   border-radius: 10px;
-  color: white;
+  color: gold;
   font-weight: 700;
   font-size: 14px;
   text-align: center;
 }
 
+.highscores input:focus {
+  outline: none;
+}
+
 .highscores input::placeholder {
-  color: white;
+  color: gold;
   font-size: 14px;
   text-align: center;
 }
