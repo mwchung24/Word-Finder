@@ -242,9 +242,7 @@ class Board {
     this.wordCount = this.wordCount.bind(this);
     this.sortNum = this.sortNum.bind(this);
 
-
     this.setup();
-    // this.username = prompt("Please enter username");
   }
 
   setupBoard() {
@@ -269,7 +267,11 @@ class Board {
     let newScore = firebase.database().ref("scores").push();
     window.newScore = newScore;
     let username = $(".highscores input").val();
-    newScore.set({username: `${username}`, score: parseInt(this.score)});
+    if (username) {
+      newScore.set({username: `${username}`, score: parseInt(this.score)});
+    } else {
+      newScore.set({username: `User1`, score: parseInt(this.score)});
+    }
 
     var scoresTable = firebase.database().ref("scores");
     scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
