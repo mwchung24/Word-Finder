@@ -17,11 +17,66 @@ The goal of the game is for the user to the find as many words as they can in 60
 ### Creating Words
 The ability for the user to be able to click and drag to create words was implemented using jQuery and mouse events.
 
-![setupBoard](./assets/images/setupBoard.png)
-![clearWord](./assets/images/clearWord.png)
-![mouseUp](./assets/images/mouseUp.png)
-![mouseDown](./assets/images/mouseDown.png)
-![mouseEnter](./assets/images/mouseEnter.png)
+```javascript
+setupBoard() {
+  this.submitted_words = [];
+  $("#board ul li")
+    .on("mousedown", this.MouseDown)
+    .on("mouseenter", this.MouseEnter);
+}
+
+MouseDown (e) {
+  e.preventDefault();
+  let tile = $(e.currentTarget);
+  tile = tile.data().pos;
+  this.selectedTiles.push(tile);
+  this.selected = true;
+  $("#submitBar input")
+    .val(e.currentTarget.children[1].innerHTML);
+}
+
+MouseEnter(e) {
+  e.preventDefault();
+
+  let tile = $(e.currentTarget);
+
+  tile = tile.data().pos;
+  if (this.selected === true) {
+    if (this.adjacentTiles(tile)) {
+      $("#board ul li")
+      .on("hover", $(e.currentTarget).addClass('active'));
+      if (!this.selectedTiles.includes(tile)) {
+        this.selectedTiles.push(tile);
+        $("#submitBar input")
+        .val(function(index, val) {
+          return val + e.currentTarget.children[1].innerHTML;
+        });
+      }
+    }
+  }
+}
+
+MouseUp (e) {
+  e.preventDefault();
+  this.selected = false;
+  this.selectedTiles = [];
+  let $li = $('<li>');
+  if(this.trie.validWord($("#submitBar input").val())) {
+    if(!this.submitted_words.includes($("#submitBar input").val())) {
+      $li.append($("#submitBar input").val());
+      $("#submittedWords ul")
+      .prepend($li);
+      this.submitted_words.push($("#submitBar input").val());
+      this.keepScore($("#submitBar input").val());
+    }
+  }
+
+  $("#submitBar input")
+    .val("");
+
+  $("#board ul li").removeClass("active");
+}
+```
 
 Users can only select tiles that are adjacent to the current tile and cannot select tiles that have already been selected.  This was solved by storing all of the visited tile's positions in an array.
 ```javascript
@@ -48,19 +103,86 @@ adjacentTiles (pos) {
   return false;
 }
 ```
-<!-- ![adjacentTiles](./assets/images/adjacentTiles.png) -->
 
 ### Dictionary Lookup
 
 A trie was built for quick look up of the dictionary.  The dictionary has around 178k words and having an efficient way to check against the dictionary was important.
 
-![trie](./assets/images/trie.png)
+```javascript
+class Trie {
+  constructor () {
+    this.root = new TrieNode("");
+  }
+
+  buildTrie (word) {
+    let currentNode = this.root;
+    for (let i = 0; i < word.length; i++) {
+      if (currentNode.children[word[i]]) {
+        currentNode = currentNode.children[word[i]];
+      } else {
+        let newNode = new TrieNode(word[i]);
+        currentNode.addChild(newNode);
+        currentNode = newNode;
+      }
+    }
+    currentNode.isWord = true;
+  }
+
+  validWord(word) {
+    let currentNode = this.root;
+    for (let i = 0; i < word.length; i++) {
+      if(currentNode.children[word[i]]) {
+        currentNode = currentNode.children[word[i]];
+      } else {
+        return false;
+      }
+    }
+
+    return currentNode.isWord;
+  }
+}
+
+class TrieNode {
+  constructor (letter) {
+    this.letter = letter;
+    this.children = {};
+    this.isWord = false;
+  }
+
+  addChild(newNode) {
+    this.children[newNode.letter] = newNode;
+  }
+}
+```
 
 ### High scores
 
 The username and scores are stored on a FireBase database and can persist between page refreshes and even on different computers.
 
-![fireBase](./assets/images/fireBase.png)
+```javascript
+let newScore = firebase.database().ref("scores").push();
+window.newScore = newScore;
+let username = $(".highscores input").val();
+if (username) {
+  newScore.set({username: `${username}`, score: parseInt(this.score)});
+} else {
+  newScore.set({username: `User1`, score: parseInt(this.score)});
+}
+
+var scoresTable = firebase.database().ref("scores");
+scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
+  $(".Instruct ol li").remove();
+  highscores = [];
+  snapshot.forEach(childSnapshot => {
+    highscores.push((childSnapshot.val()));
+  });
+    highscores.reverse();
+  for (let i = 0; i < highscores.length; i++) {
+    let $li = $('<li>');
+    $(".Instruct ol").append($li.text(`${highscores[i].username}: ${highscores[i].score} points`));
+  }
+});
+```
 
 ## Future Improvements
 
