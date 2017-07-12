@@ -88,3 +88,17 @@
   font-weight: 700;
   font-size: 24px;
 }
+
+.svgLine {
+  position: absolute;
+  z-index: -1;
+}
+
+.svgLine line {
+  stroke: gold;
+  stroke-width: 10px;
+}
+
+.invisible line {
+  visibility: hidden;
+}
