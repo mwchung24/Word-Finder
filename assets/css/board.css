@@ -25,10 +25,40 @@
 
 #board ul li:active {
   background: linear-gradient(135deg, white, gold);
+  -webkit-animation: jiggle 0.2s infinite;
+  -moz-animation-duration: 0.2s;
+  -moz-animation-name: jiggle;
+  -moz-animation-iteration-count: infinite;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
 }
 
 #board ul li.active {
   background: linear-gradient(135deg, white, gold);
+  -webkit-animation: jiggle 0.2s infinite;
+  -moz-animation-duration: 0.2s;
+  -moz-animation-name: jiggle;
+  -moz-animation-iteration-count: infinite;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+}
+
+@-moz-keyframes jiggle {
+    0% {
+        -moz-transform: rotate(-1deg);
+    }
+    50% {
+        -moz-transform: rotate(1deg);
+    }
+}
+
+@-webkit-keyframes jiggle {
+    0% {
+        -webkit-transform: rotate(-1deg);
+        }
+    50% {
+        -webkit-transform: rotate(1deg);
+    }
 }
 
 #board ul li div:first-child {
