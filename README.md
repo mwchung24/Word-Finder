@@ -18,6 +18,7 @@ The goal of the game is for the user to the find as many words as they can in 60
 The ability for the user to be able to click and drag to create words was implemented using jQuery and mouse events.
 
 ```javascript
+//sets up event listeners on the tiles
 setupBoard() {
   this.submitted_words = [];
   $("#board ul li")
@@ -25,6 +26,9 @@ setupBoard() {
     .on("mouseenter", this.MouseEnter);
 }
 
+//mouse event that starts to create a "word"
+//dictionary to compare against the
+//submitbar is filled in as the user drags
 MouseDown (e) {
   e.preventDefault();
   let tile = $(e.currentTarget);
@@ -35,6 +39,8 @@ MouseDown (e) {
     .val(e.currentTarget.children[1].innerHTML);
 }
 
+//mouse event when mouse is hovered over a tile
+//programmed to behave the same way as if it was clicked
 MouseEnter(e) {
   e.preventDefault();
 
@@ -56,6 +62,8 @@ MouseEnter(e) {
   }
 }
 
+//mouse event that compares the words against the dictionary,
+//submits word and score if word is found in the dictionary
 MouseUp (e) {
   e.preventDefault();
   this.selected = false;
@@ -80,6 +88,8 @@ MouseUp (e) {
 
 Users can only select tiles that are adjacent to the current tile and cannot select tiles that have already been selected.  This was solved by storing all of the visited tile's positions in an array.
 ```javascript
+//adjacent tiles check.  Checks to see if the current tile and the next
+//tile are adjacent.  Does not allow for non-adjacent drags
 adjacentTiles (pos) {
   const adjacent = [
     [-1, -1],
@@ -109,6 +119,7 @@ adjacentTiles (pos) {
 A trie was built for quick look up of the dictionary.  The dictionary has around 178k words and having an efficient way to check against the dictionary was important.
 
 ```javascript
+//The code for the trie
 class Trie {
   constructor () {
     this.root = new TrieNode("");
@@ -160,6 +171,7 @@ class TrieNode {
 The username and scores are stored on a FireBase database and can persist between page refreshes and even on different computers.
 
 ```javascript
+//submits the username and score to the firebase database
 let newScore = firebase.database().ref("scores").push();
 window.newScore = newScore;
 let username = $(".highscores input").val();
@@ -169,6 +181,7 @@ if (username) {
   newScore.set({username: `User1`, score: parseInt(this.score)});
 }
 
+//fetches the top 10 highscores and renders them to the screen
 var scoresTable = firebase.database().ref("scores");
 scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
   $(".Instruct ol li").remove();

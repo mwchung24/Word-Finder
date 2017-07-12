@@ -104,6 +104,7 @@ class Game {
     this.splash();
   }
 
+  //instructions splash screen before user starts the game
   splash() {
     $("#board ul").remove();
     let $div = $('<div class="Instructions">');
@@ -120,6 +121,7 @@ class Game {
     this.board.username($div5);
   }
 
+  //rendering of the start button
   startButton() {
     const $button = $("<button>");
 
@@ -132,6 +134,7 @@ class Game {
     .append($button);
   }
 
+  //render of the restart button
   resetButton() {
     const $resetButton = $("<button>");
 
@@ -144,6 +147,7 @@ class Game {
     .append($resetButton);
   }
 
+  //starts the game when start button is pressed
   start () {
     this.board.setupBoard();
     this.board.clearWord();
@@ -153,10 +157,12 @@ class Game {
     this.resetButton();
   }
 
+  //game over, when timer hits zero, the board is deactivated
   gameOver () {
     this.board.deactivateBoard();
   }
 
+  //count down for the timer
   playInterval() {
     clearInterval(this.interval);
     this.interval = null;
@@ -166,11 +172,13 @@ class Game {
     );
   }
 
+  //clears the setInterval for the timer
   stopInterval() {
     clearInterval(this.interval);
     this.interval = null;
   }
 
+  //timer check to see if timer is at zero
   timerfunc () {
     this.timer -= 1;
     if (this.timer <= 0) {
@@ -184,6 +192,7 @@ class Game {
     }
   }
 
+  //resets the game when the restart button is clicked
   reset() {
     this.board.randomizeBoard();
     this.timer = 60;
@@ -246,6 +255,7 @@ class Board {
     this.setup();
   }
 
+  //sets up event listeners on the tiles
   setupBoard() {
     this.submitted_words = [];
     $("#board ul li")
@@ -253,6 +263,7 @@ class Board {
       .on("mouseenter", this.MouseEnter);
   }
 
+  //removes event listeners on the tiles
   deactivateBoard() {
     $("#board ul li")
       .off();
@@ -260,8 +271,10 @@ class Board {
     $("body")
       .off();
 
+    //removes tiles from the board
     $("#board ul").remove();
 
+    //adds game over text where the board was removed from
     let $div = $('<div class="gameOverText">');
     if (this.score > 100) {
       $div.text(`You're a super star! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
@@ -271,6 +284,7 @@ class Board {
       $div.text(`You can do better! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
     }
 
+    //submits the username and score to the firebase database
     let newScore = firebase.database().ref("scores").push();
     window.newScore = newScore;
     let username = $(".highscores input").val();
@@ -280,6 +294,7 @@ class Board {
       newScore.set({username: `User1`, score: parseInt(this.score)});
     }
 
+    //fetches the top 10 highscores and renders them to the screen
     var scoresTable = firebase.database().ref("scores");
     scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
       $(".Instruct ol li").remove();
@@ -295,15 +310,18 @@ class Board {
     });
   }
 
+  //sorts the highscores from highest to lowest
   sortNum (a, b) {
     return a - b;
   }
 
+  //creates the username input form
   username($div5) {
     let $input = $('<input placeholder="Enter Username">');
     $(".highscores").append($input);
   }
 
+  //counts the amount of words found
   wordCount () {
     if (this.submitted_words.length <= 0) {
       return 0;
@@ -312,11 +330,13 @@ class Board {
     }
   }
 
+  //clears word from the submitbar
   clearWord() {
     $("body")
     .on("mouseup", this.MouseUp);
   }
 
+  //keeps score
   keepScore(word) {
     let wordArray = word.split("");
     for (let i = 0; i < wordArray.length; i++) {
@@ -326,6 +346,8 @@ class Board {
       .text(`Score: ${this.score}`);
   }
 
+  //mouse event that compares the words against the dictionary,
+  //submits word and score if word is found in the dictionary
   MouseUp (e) {
     e.preventDefault();
     this.selected = false;
@@ -344,10 +366,14 @@ class Board {
     $("#submitBar input")
       .val("");
 
+    //removes the highlighting from the tiles
     $("#board ul li").removeClass("active");
+    //removes lines between tiles
     $(".svgLine").addClass('invisible');
   }
 
+  //starts to create a "word" to compare against the dictionary
+  //submitbar is filled in as the user drags
   MouseDown (e) {
     e.preventDefault();
     let tile = $(e.currentTarget);
@@ -358,6 +384,7 @@ class Board {
       .val(e.currentTarget.children[1].innerHTML);
   }
 
+  //creates the lines between tiles
   tileLines(currentTile, previousTile) {
     let currentx = currentTile[0];
     let currenty = currentTile[1];
@@ -367,6 +394,8 @@ class Board {
     $(`.tile${currentx}${currenty}-${previousx}${previousy}`).removeClass('invisible');
   }
 
+  //mouse event when mouse is hovered over a tile
+  //programmed to behave the same way as if it was clicked
   MouseEnter(e) {
     e.preventDefault();
 
@@ -390,6 +419,8 @@ class Board {
     }
   }
 
+  //adjacent tiles check.  Checks to see if the current tile and the next
+  //tile are adjacent.  Does not allow for non-adjacent drags
   adjacentTiles (pos) {
     const adjacent = [
       [-1, -1],
@@ -413,6 +444,7 @@ class Board {
     return false;
   }
 
+  //randomizes the board when user starts or restarts the game
   randomizeBoard() {
     $("#board ul li").remove();
     this.score = 0;
@@ -423,6 +455,7 @@ class Board {
     this.setup();
   }
 
+  //builds a trie from the dictionary.txt
   dictionary(text) {
     const words = text.split("\n");
     words.pop();
@@ -432,6 +465,7 @@ class Board {
     });
   }
 
+  //sets up the board with initial tiles
   setup() {
     $("#board ul").remove();
     $("#submittedWords ul li").remove();
@@ -451,6 +485,8 @@ class Board {
     }
 
     this.$el.append($ul);
+
+    //lines between tiles are initially hidden and only visible conditionally
     //horizontal
     $("#board").append('<svg class="svgLine invisible tile00-01 tile01-00" width="500" height="500"><line x1="130" y1="42" x2="210" y2="42"/></svg>');
     $("#board").append('<svg class="svgLine invisible tile01-02 tile02-01" width="500" height="500"><line x1="210" y1="42" x2="290" y2="42"/></svg>');
@@ -505,6 +541,7 @@ class Board {
     $("#board").append('<svg class="svgLine invisible tile23-32 tile32-23" width="500" height="500"><line x1="370" y1="202" x2="290" y2="282"/></svg>');
 
 
+    //renders highscore table from fire base on initial app load
     var scoresTable = firebase.database().ref("scores");
     scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
       $(".Instruct ol li").remove();
