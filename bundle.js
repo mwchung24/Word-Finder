@@ -136,6 +136,7 @@ class Game {
 
   //render of the restart button
   resetButton() {
+    $("#startButton button").remove();
     const $resetButton = $("<button>");
 
     $resetButton.text("Restart");
@@ -446,7 +447,6 @@ class Board {
 
   //randomizes the board when user starts or restarts the game
   randomizeBoard() {
-    $("#board ul li").remove();
     this.score = 0;
     $("#score")
       .text(`Score: ${this.score}`);
@@ -468,6 +468,7 @@ class Board {
   //sets up the board with initial tiles
   setup() {
     $("#board ul").remove();
+    $("#board svg").remove();
     $("#submittedWords ul li").remove();
     $("#board div").remove();
     const $ul = $("<ul>");
