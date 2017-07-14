@@ -142,9 +142,6 @@ class Game {
     $resetButton.text("Restart");
 
     $("#startButton")
-    .on("click", this.reset);
-
-    $("#startButton")
     .append($resetButton);
   }
 
