@@ -249,6 +249,12 @@ class Board {
     this.wordCount = this.wordCount.bind(this);
     this.sortNum = this.sortNum.bind(this);
     this.tileLines = this.tileLines.bind(this);
+    this.tileSound = new Audio("./assets/sounds/tiles.wav");
+    this.tileSound.volume = 0.4;
+    this.successSound = new Audio("./assets/sounds/success.wav");
+    this.successSound.volume = 0.1;
+    this.failSound = new Audio("./assets/sounds/failed.wav");
+    this.failSound.volume = 0.1;
 
     this.setup();
   }
@@ -271,6 +277,7 @@ class Board {
 
     //removes tiles from the board
     $("#board ul").remove();
+    $("#board svg").remove();
 
     //adds game over text where the board was removed from
     let $div = $('<div class="gameOverText">');
@@ -358,7 +365,12 @@ class Board {
         .prepend($li);
         this.submitted_words.push($("#submitBar input").val());
         this.keepScore($("#submitBar input").val());
+        this.successSound.play();
+      } else {
+        this.failSound.play();
       }
+    } else {
+      this.failSound.play();
     }
 
     $("#submitBar input")
@@ -370,13 +382,14 @@ class Board {
     $(".svgLine").addClass('invisible');
   }
 
-  //starts to create a "word" to compare against the dictionary
-  //submitbar is filled in as the user drags
+  //mouse event that creates a "word" to compare against the dictionary
+  //submitbar is filled in as the user drags across adjacent tiles
   MouseDown (e) {
     e.preventDefault();
     let tile = $(e.currentTarget);
     tile = tile.data().pos;
     this.selectedTiles.push(tile);
+    this.tileSound.play();
     this.selected = true;
     $("#submitBar input")
       .val(e.currentTarget.children[1].innerHTML);
@@ -405,7 +418,8 @@ class Board {
         $("#board ul li")
         .on("hover", $(e.currentTarget).addClass('active'));
         if (!this.selectedTiles.includes(tile)) {
-          // debugger
+          this.tileSound.pause();
+          this.tileSound.play();
           this.tileLines(tile, this.selectedTiles.slice(-1)[0]);
           this.selectedTiles.push(tile);
           $("#submitBar input")
@@ -537,7 +551,6 @@ class Board {
     $("#board").append('<svg class="svgLine invisible tile22-31 tile31-22" width="500" height="500"><line x1="290" y1="202" x2="210" y2="282"/></svg>');
     $("#board").append('<svg class="svgLine invisible tile22-33 tile33-22" width="500" height="500"><line x1="290" y1="202" x2="370" y2="282"/></svg>');
     $("#board").append('<svg class="svgLine invisible tile23-32 tile32-23" width="500" height="500"><line x1="370" y1="202" x2="290" y2="282"/></svg>');
-
 
     //renders highscore table from fire base on initial app load
     var scoresTable = firebase.database().ref("scores");
