@@ -107,8 +107,13 @@ body {
   text-align: center;
 }
 
+.mute {
+  cursor: pointer;
+  font-family: sans-serif;
+  color: white;
+}
 
-
-/*.Instruct ul {
-  list-style: none;
-}*/
+.timerAndScore i {
+  font-size: 30px;
+  margin-bottom: 15px;
+}
