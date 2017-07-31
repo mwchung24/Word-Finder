@@ -21,6 +21,10 @@
   box-shadow: 0 0 .25em black;
   cursor: pointer;
   position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #board ul li:active {
