@@ -491,6 +491,7 @@ class Board {
 
   handleMute() {
     if(this.tileSound.volume) {
+      $(".timerAndScore i").addClass('muted');
       this.tileSound.volume = 0;
       this.successSound.volume = 0;
       this.failSound.volume = 0;
@@ -498,6 +499,7 @@ class Board {
       this.tileSound.volume = 0.4;
       this.successSound.volume = 0.1;
       this.failSound.volume = 0.1;
+      $(".timerAndScore i").removeClass('muted');
     }
   }
 
@@ -525,7 +527,7 @@ class Board {
 
     $(".timerAndScore i").remove();
 
-    let $i = $('<i class="fa fa-music mute" aria-hidden="true"></i>');
+    let $i = $('<i class="fa fa-music mute muted" aria-hidden="true"></i>');
     // $span.text('<i class="fa fa-music mute" aria-hidden="true"></i>');
     $(".timerAndScore").append($i);
 
