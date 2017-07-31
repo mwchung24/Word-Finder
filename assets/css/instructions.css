@@ -20,11 +20,25 @@
 }
 
 .Instruct {
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   margin-top: 10px;
   padding: 0 15px;
   font-family: sans-serif;
   color: white;
   font-weight: 700;
+}
+
+.demo img {
+  border: 1px solid black;
+  border-radius: 15px;
+  height: 110px;
+  width: 200px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.demo {
+  margin-top: 10px;
 }
