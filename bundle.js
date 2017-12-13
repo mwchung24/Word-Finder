@@ -60,154 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Game = __webpack_require__(1);
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   const game = new Game();
-// });
-
-$( () => {
-  const game = new Game();
-});
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Board = __webpack_require__(2);
-
-class Game {
-  constructor() {
-
-    this.board = new Board (
-      $("#board")
-    );
-
-    this.timer = 60;
-    this.interval = null;
-
-    this.playInterval = this.playInterval.bind(this);
-    this.stopInterval = this.stopInterval.bind(this);
-    this.gameOver = this.gameOver.bind(this);
-    this.start = this.start.bind(this);
-    this.reset = this.reset.bind(this);
-    this.timerfunc = this.timerfunc.bind(this);
-    this.startButton();
-    this.splash();
-  }
-
-  //instructions splash screen before user starts the game
-  splash() {
-    $("#board ul").remove();
-    let $div = $('<div class="Instructions">');
-    $("#board").append($div);
-    let $div2 = $('<div class="InstructionsHeader">');
-    $("#board div").append($div2.text("Instructions"));
-    let $div3 = $('<div class="Instruct">');
-    $div.append($div3.text("Use mouse to click and drag across adjacent letters to create words!  You can also drag diagonally."));
-    let $div4 = $('<div class="Instruct">');
-    $div.append($div4.text("You have 60 seconds to submit as many words as you can!"));
-    let $div5 = $('<div class="Instruct">');
-    $div.append($div5.text("Good Luck!"));
-    let $div6 = $('<div class="demo">');
-    $div6.append('<img src="./assets/images/demo.gif">');
-    $div.append($div6);
-
-    this.board.username($div5);
-  }
-
-  //rendering of the start button
-  startButton() {
-    const $button = $("<button>");
-
-    $button.text("Start");
-
-    $("#startButton")
-    .on("click", this.reset);
-
-    $("#startButton")
-    .append($button);
-  }
-
-  //render of the restart button
-  resetButton() {
-    $("#startButton button").remove();
-    const $resetButton = $("<button>");
-
-    $resetButton.text("Restart");
-
-    $("#startButton")
-    .append($resetButton);
-  }
-
-  //starts the game when start button is pressed
-  start () {
-    this.board.setupBoard();
-    this.board.clearWord();
-    $("#startButton button").remove();
-
-    this.playInterval();
-    this.resetButton();
-  }
-
-  //game over, when timer hits zero, the board is deactivated
-  gameOver () {
-    this.board.deactivateBoard();
-  }
-
-  //count down for the timer
-  playInterval() {
-    clearInterval(this.interval);
-    this.interval = null;
-    this.interval = setInterval(
-      this.timerfunc,
-      1000
-    );
-  }
-
-  //clears the setInterval for the timer
-  stopInterval() {
-    clearInterval(this.interval);
-    this.interval = null;
-  }
-
-  //timer check to see if timer is at zero
-  timerfunc () {
-    this.timer -= 1;
-    if (this.timer <= 0) {
-      $("#timer")
-      .text(`Timer: 0`);
-      this.stopInterval();
-      this.gameOver();
-    } else {
-      $("#timer")
-      .text(`Timer: ${this.timer}`);
-    }
-  }
-
-  //resets the game when the restart button is clicked
-  reset() {
-    this.board.randomizeBoard();
-    this.timer = 60;
-    $("#timer")
-    .text(`Timer: ${this.timer}`);
-    this.start();
-  }
-}
-
-module.exports = Game;
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const GenerateLetter = __webpack_require__(3);
@@ -260,6 +117,9 @@ class Board {
     this.successSound.volume = 0;
     this.failSound = new Audio("./assets/sounds/failed.wav");
     this.failSound.volume = 0;
+    this.gameOverText = this.gameOverText.bind(this);
+    this.submitScore = this.submitScore.bind(this);
+    this.fetchScores = this.fetchScores.bind(this);
 
     this.setup();
   }
@@ -284,6 +144,13 @@ class Board {
     $("#board ul").remove();
     $("#board svg").remove();
 
+    this.gameOverText();
+    this.submitScore();
+    this.fetchScores();
+
+  }
+
+  gameOverText() {
     //adds game over text where the board was removed from
     let $div = $('<div class="gameOverText">');
     if (this.score > 100) {
@@ -293,7 +160,9 @@ class Board {
     } else {
       $div.text(`You can do better! You found ${this.wordCount()} words and scored ${this.score} points!`).appendTo($("#board"));
     }
+  }
 
+  submitScore() {
     //submits the username and score to the firebase database
     let newScore = firebase.database().ref("scores").push();
     window.newScore = newScore;
@@ -303,7 +172,9 @@ class Board {
     } else {
       newScore.set({username: `User1`, score: parseInt(this.score)});
     }
+  }
 
+  fetchScores() {
     //fetches the top 10 highscores and renders them to the screen
     var scoresTable = firebase.database().ref("scores");
     scoresTable.orderByChild("score").limitToLast(10).on('value', (snapshot, highscores) => {
@@ -611,6 +482,149 @@ module.exports = Board;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Game = __webpack_require__(2);
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   const game = new Game();
+// });
+
+$( () => {
+  const game = new Game();
+});
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Board = __webpack_require__(0);
+
+class Game {
+  constructor() {
+
+    this.board = new Board (
+      $("#board")
+    );
+
+    this.timer = 60;
+    this.interval = null;
+
+    this.playInterval = this.playInterval.bind(this);
+    this.stopInterval = this.stopInterval.bind(this);
+    this.gameOver = this.gameOver.bind(this);
+    this.start = this.start.bind(this);
+    this.reset = this.reset.bind(this);
+    this.timerfunc = this.timerfunc.bind(this);
+    this.startButton();
+    this.splash();
+  }
+
+  //instructions splash screen before user starts the game
+  splash() {
+    $("#board ul").remove();
+    let $div = $('<div class="Instructions">');
+    $("#board").append($div);
+    let $div2 = $('<div class="InstructionsHeader">');
+    $("#board div").append($div2.text("Instructions"));
+    let $div3 = $('<div class="Instruct">');
+    $div.append($div3.text("Use mouse to click and drag across adjacent letters to create words!  You can also drag diagonally."));
+    let $div4 = $('<div class="Instruct">');
+    $div.append($div4.text("You have 60 seconds to submit as many words as you can!"));
+    let $div5 = $('<div class="Instruct">');
+    $div.append($div5.text("Good Luck!"));
+    let $div6 = $('<div class="demo">');
+    $div6.append('<img src="./assets/images/demo.gif">');
+    $div.append($div6);
+
+    this.board.username($div5);
+  }
+
+  //rendering of the start button
+  startButton() {
+    const $button = $("<button>");
+
+    $button.text("Start");
+
+    $("#startButton")
+    .on("click", this.reset);
+
+    $("#startButton")
+    .append($button);
+  }
+
+  //render of the restart button
+  resetButton() {
+    $("#startButton button").remove();
+    const $resetButton = $("<button>");
+
+    $resetButton.text("Restart");
+
+    $("#startButton")
+    .append($resetButton);
+  }
+
+  //starts the game when start button is pressed
+  start () {
+    this.board.setupBoard();
+    this.board.clearWord();
+    $("#startButton button").remove();
+
+    this.playInterval();
+    this.resetButton();
+  }
+
+  //game over, when timer hits zero, the board is deactivated
+  gameOver () {
+    this.board.deactivateBoard();
+  }
+
+  //count down for the timer
+  playInterval() {
+    clearInterval(this.interval);
+    this.interval = null;
+    this.interval = setInterval(
+      this.timerfunc,
+      1000
+    );
+  }
+
+  //clears the setInterval for the timer
+  stopInterval() {
+    clearInterval(this.interval);
+    this.interval = null;
+  }
+
+  //timer check to see if timer is at zero
+  timerfunc () {
+    this.timer -= 1;
+    if (this.timer <= 0) {
+      $("#timer")
+      .text(`Timer: 0`);
+      this.stopInterval();
+      this.gameOver();
+    } else {
+      $("#timer")
+      .text(`Timer: ${this.timer}`);
+    }
+  }
+
+  //resets the game when the restart button is clicked
+  reset() {
+    this.board.randomizeBoard();
+    this.timer = 60;
+    $("#timer")
+    .text(`Timer: ${this.timer}`);
+    this.start();
+  }
+}
+
+module.exports = Game;
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
@@ -869,11 +883,19 @@ class Trie {
   }
 
   buildTrie (word) {
+    // current node or root is set to an empty trie node
     let currentNode = this.root;
+    // iterate through the word argument
     for (let i = 0; i < word.length; i++) {
+      // check to see if the letter is part of the current node's
+      // children
       if (currentNode.children[word[i]]) {
+        // reset the current node to the child node aka the next node
         currentNode = currentNode.children[word[i]];
       } else {
+        // new node with the new letter is made into the current
+        // node's children
+        // then reset the current node to the child node aka the next node
         let newNode = new TrieNode(word[i]);
         currentNode.addChild(newNode);
         currentNode = newNode;
@@ -883,11 +905,17 @@ class Trie {
   }
 
   validWord(word) {
+    // starts the current node as an empty trie node
     let currentNode = this.root;
+    // iterate through the word
     for (let i = 0; i < word.length; i++) {
+      // check to see if the next letter is the in the current node's
+      // children
       if(currentNode.children[word[i]]) {
+        // reset the current node to the child node aka the next node
         currentNode = currentNode.children[word[i]];
       } else {
+        // if not found... then it is not a word....
         return false;
       }
     }
